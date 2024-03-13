@@ -36,9 +36,6 @@
             this.chooToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.dataGridView = new System.Windows.Forms.DataGridView();
-            this.process = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.arrivalTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.burstTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btn_Add = new System.Windows.Forms.Button();
             this.btn_Remove = new System.Windows.Forms.Button();
             this.btn_Run = new System.Windows.Forms.Button();
@@ -55,6 +52,11 @@
             this.lb_Algorithms = new System.Windows.Forms.Label();
             this.lb_Quantum = new System.Windows.Forms.Label();
             this.tbx_quantum = new System.Windows.Forms.TextBox();
+            this.process = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.arrivalTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.burstTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.priority = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.priorityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuAlgorithms.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.panel2.SuspendLayout();
@@ -77,7 +79,8 @@
             this.cPUSchedulingAlgorithmsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fCFSToolStripMenuItem,
             this.sJFToolStripMenuItem,
-            this.rBToolStripMenuItem});
+            this.rBToolStripMenuItem,
+            this.priorityToolStripMenuItem});
             this.cPUSchedulingAlgorithmsToolStripMenuItem.Name = "cPUSchedulingAlgorithmsToolStripMenuItem";
             this.cPUSchedulingAlgorithmsToolStripMenuItem.Size = new System.Drawing.Size(204, 24);
             this.cPUSchedulingAlgorithmsToolStripMenuItem.Text = "CPU Scheduling Algorithms";
@@ -121,40 +124,25 @@
             // 
             // dataGridView
             // 
+            this.dataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridView.BackgroundColor = System.Drawing.Color.White;
+            this.dataGridView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.process,
             this.arrivalTime,
-            this.burstTime});
+            this.burstTime,
+            this.priority});
+            this.dataGridView.Enabled = false;
+            this.dataGridView.GridColor = System.Drawing.SystemColors.ScrollBar;
             this.dataGridView.Location = new System.Drawing.Point(276, 100);
             this.dataGridView.Name = "dataGridView";
             this.dataGridView.RowHeadersWidth = 51;
             this.dataGridView.RowTemplate.Height = 24;
-            this.dataGridView.Size = new System.Drawing.Size(410, 230);
+            this.dataGridView.Size = new System.Drawing.Size(420, 230);
             this.dataGridView.TabIndex = 2;
-            // 
-            // process
-            // 
-            this.process.Frozen = true;
-            this.process.HeaderText = "Process";
-            this.process.MinimumWidth = 6;
-            this.process.Name = "process";
-            this.process.ReadOnly = true;
-            this.process.Width = 50;
-            // 
-            // arrivalTime
-            // 
-            this.arrivalTime.HeaderText = "Arrival Time";
-            this.arrivalTime.MinimumWidth = 6;
-            this.arrivalTime.Name = "arrivalTime";
-            this.arrivalTime.Width = 105;
-            // 
-            // burstTime
-            // 
-            this.burstTime.HeaderText = "Burst Time";
-            this.burstTime.MinimumWidth = 6;
-            this.burstTime.Name = "burstTime";
-            this.burstTime.Width = 105;
             // 
             // btn_Add
             // 
@@ -310,6 +298,43 @@
             this.tbx_quantum.Size = new System.Drawing.Size(66, 22);
             this.tbx_quantum.TabIndex = 16;
             // 
+            // process
+            // 
+            this.process.Frozen = true;
+            this.process.HeaderText = "Process";
+            this.process.MinimumWidth = 6;
+            this.process.Name = "process";
+            this.process.ReadOnly = true;
+            this.process.Width = 50;
+            // 
+            // arrivalTime
+            // 
+            this.arrivalTime.HeaderText = "Arrival Time";
+            this.arrivalTime.MinimumWidth = 6;
+            this.arrivalTime.Name = "arrivalTime";
+            this.arrivalTime.Width = 75;
+            // 
+            // burstTime
+            // 
+            this.burstTime.HeaderText = "Burst Time";
+            this.burstTime.MinimumWidth = 6;
+            this.burstTime.Name = "burstTime";
+            this.burstTime.Width = 75;
+            // 
+            // priority
+            // 
+            this.priority.HeaderText = "Priority";
+            this.priority.MinimumWidth = 6;
+            this.priority.Name = "priority";
+            this.priority.Width = 65;
+            // 
+            // priorityToolStripMenuItem
+            // 
+            this.priorityToolStripMenuItem.Name = "priorityToolStripMenuItem";
+            this.priorityToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.priorityToolStripMenuItem.Text = "Priority";
+            this.priorityToolStripMenuItem.Click += new System.EventHandler(this.priorityToolStripMenuItem_Click);
+            // 
             // frm_FCFS
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -371,12 +396,14 @@
         private System.Windows.Forms.Label label3;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.Label lb_Algorithms;
-        private System.Windows.Forms.DataGridViewTextBoxColumn process;
-        private System.Windows.Forms.DataGridViewTextBoxColumn arrivalTime;
-        private System.Windows.Forms.DataGridViewTextBoxColumn burstTime;
         private System.Windows.Forms.ToolStripMenuItem rBToolStripMenuItem;
         private System.Windows.Forms.Label lb_Quantum;
         private System.Windows.Forms.TextBox tbx_quantum;
+        private System.Windows.Forms.DataGridViewTextBoxColumn process;
+        private System.Windows.Forms.DataGridViewTextBoxColumn arrivalTime;
+        private System.Windows.Forms.DataGridViewTextBoxColumn burstTime;
+        private System.Windows.Forms.DataGridViewTextBoxColumn priority;
+        private System.Windows.Forms.ToolStripMenuItem priorityToolStripMenuItem;
     }
 }
 
