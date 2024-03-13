@@ -160,8 +160,16 @@ namespace FCFS
                 }
                 else if (lb_Algorithms.Text == "Round Robin")
                 {
-                    int timeQuantum = int.Parse(tbx_quantum.Text.ToString());
-                    ganttBars = RoundRobin(processes, timeQuantum);
+                    if(tbx_quantum.Text == "")
+                    {
+                        MessageBox.Show("Please enter the quantum", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    else
+                    {
+                        int timeQuantum = int.Parse(tbx_quantum.Text.ToString());
+                        ganttBars = RoundRobin(processes, timeQuantum);
+                    }
                 }
 
                 DrawGanttChart(ganttBars);
@@ -346,37 +354,49 @@ namespace FCFS
                     // Lấy tiến trình ở đầu hàng đợi sẵn sàng để thực thi
                     Process currentProcess = readyQueue.First();
 
-                    // Tạo GanttBar cho tiến trình được chọn
-                    int executionTime = Math.Min(timeQuantum, currentProcess.BurstTime); // Thời gian thực thi là thời gian quantum hoặc thời gian còn lại của tiến trình nếu nhỏ hơn
-                    GanttBar ganttBar = new GanttBar(currentProcess.Name, currentTime, currentProcess.ArrivalTime, executionTime, currentTime + executionTime);
-
-                    // Thêm GanttBar vào danh sách
-                    ganttBars.Add(ganttBar);
-
-                    // Giảm thời gian thực hiện của tiến trình
-                    currentProcess.BurstTime -= executionTime;
-
-                    // Kiểm tra xem tiến trình đã hoàn thành chưa
-                    if (currentProcess.BurstTime == 0)
+                    // Kiểm tra xem tiến trình còn thời gian thực hiện không
+                    if (currentProcess.BurstTime > 0)
                     {
-                        // Nếu tiến trình đã hoàn thành, cập nhật thời gian kết thúc của GanttBar
-                        ganttBar.EndTime = currentTime + executionTime;
-                        // Loại bỏ tiến trình đã hoàn thành khỏi hàng đợi sẵn sàng
-                        readyQueue.Remove(currentProcess);
+                        // Tạo GanttBar cho tiến trình được chọn
+                        int executionTime = Math.Min(timeQuantum, currentProcess.BurstTime); // Thời gian thực thi là thời gian quantum hoặc thời gian còn lại của tiến trình nếu nhỏ hơn
+                        GanttBar ganttBar = new GanttBar(currentProcess.Name, currentTime, currentProcess.ArrivalTime, executionTime, currentTime + executionTime);
+
+                        // Thêm GanttBar vào danh sách
+                        ganttBars.Add(ganttBar);
+
+                        // Giảm thời gian thực hiện của tiến trình
+                        currentProcess.BurstTime -= executionTime;
+
+                        // Kiểm tra xem tiến trình đã hoàn thành chưa
+                        if (currentProcess.BurstTime == 0)
+                        {
+                            // Nếu tiến trình đã hoàn thành, cập nhật thời gian kết thúc của GanttBar
+                            ganttBar.EndTime = currentTime + executionTime;
+                            // Loại bỏ tiến trình đã hoàn thành khỏi hàng đợi sẵn sàng
+                            readyQueue.Remove(currentProcess);
+                        }
+                        else
+                        {
+                            // Di chuyển tiến trình tới cuối hàng đợi chỉ khi nó còn thời gian thực hiện
+                            readyQueue.RemoveAt(0);
+                            readyQueue.Add(currentProcess);
+                        }
+
+                        // Cập nhật thời gian hiện tại
+                        currentTime += executionTime;
                     }
                     else
                     {
-                        // Di chuyển tiến trình tới cuối hàng đợi
+                        // Nếu tiến trình không còn thời gian thực hiện, loại bỏ nó khỏi hàng đợi
                         readyQueue.RemoveAt(0);
-                        readyQueue.Add(currentProcess);
                     }
-
-                    // Cập nhật thời gian hiện tại
-                    currentTime += executionTime;
                 }
             }
+            ganttBars = MergeSimilarGanttBars(ganttBars);
             return ganttBars;
         }
+
+
 
 
         private List<GanttBar> MergeSimilarGanttBars(List<GanttBar> ganttBars)
@@ -456,10 +476,9 @@ namespace FCFS
                 Rectangle rect = new Rectangle(startX, y, width, barHeight);
                 g.FillRectangle(barBrush, rect);
                 g.DrawRectangle(barPen, rect);
-                Font font = new Font("Arial", 10, FontStyle.Bold);
                 // Hiển thị tên tiến trình
                 string text = ganttBar.ProcessName;
-                g.DrawString(text, font, Brushes.Black, startX + width / 2 - 15, y + 8);
+                g.DrawString(text, Font, Brushes.Black, startX + width / 2 - 15, y + 8);
             }
 
         }
