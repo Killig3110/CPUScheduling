@@ -205,7 +205,14 @@ namespace FCFS
                     }
                     else if (lb_Algorithms.Text == "Priority")
                     {
-                        ganttBars = priority_non_preemptive(processes);
+                        if (rbtn_NonPreemptive.Checked)
+                        {
+                            ganttBars = priority_non_preemptive(processes);
+                        }
+                        else if (rbtn_Preemptive.Checked)
+                        {
+                            ganttBars = priority_preemptive(processes);
+                        }
                     }
                     DrawGanttChart(ganttBars);
                     DrawTimeChart(ganttBars);
@@ -493,6 +500,65 @@ namespace FCFS
 
             return ganttBars;
         }
+
+        private List<GanttBar> priority_preemptive(List<Process> processes)
+        {
+            List<GanttBar> ganttBars = new List<GanttBar>();
+            List<Process> readyQueue = new List<Process>();
+            int currentTime = 0;
+
+            while (true)
+            {
+                // Lấy các tiến trình đã đến và chưa hoàn thành
+                var arrivedProcesses = processes.Where(p => p.ArrivalTime <= currentTime && p.BurstTime > 0 && !readyQueue.Contains(p)).ToList();
+
+                // Thêm các tiến trình đã đến vào hàng đợi sẵn sàng
+                readyQueue.AddRange(arrivedProcesses);
+
+                // Kiểm tra xem hàng đợi sẵn sàng có trống không
+                if (readyQueue.Count == 0)
+                {
+                    // Nếu hàng đợi sẵn sàng trống và không còn tiến trình nào đến, thoát khỏi vòng lặp
+                    if (arrivedProcesses.Count == 0)
+                        break;
+                    // Nếu hàng đợi sẵn sàng trống nhưng còn tiến trình đến, tăng thời gian lên cho đến khi có tiến trình đến
+                    else
+                        currentTime++;
+                }
+                else
+                {
+                    // Sắp xếp hàng đợi sẵn sàng theo độ ưu tiên tăng dần
+                    readyQueue.Sort((a, b) => a.Priority.CompareTo(b.Priority));
+
+                    // Lấy tiến trình có độ ưu tiên thấp nhất từ hàng đợi sẵn sàng
+                    Process lowestPriorityProcess = readyQueue.First();
+
+                    // Tạo GanttBar cho tiến trình được chọn
+                    GanttBar ganntBar = new GanttBar(lowestPriorityProcess.Name, currentTime, lowestPriorityProcess.ArrivalTime, 1, currentTime + 1);
+
+                    // Thêm GanttBar vào danh sách
+                    ganttBars.Add(ganntBar);
+
+                    // Giảm thời gian thực hiện của tiến trình được chọn
+                    lowestPriorityProcess.BurstTime--;
+
+                    // Kiểm tra xem tiến trình đã hoàn thành chưa
+                    if (lowestPriorityProcess.BurstTime == 0)
+                    {
+                        // Nếu tiến trình đã hoàn thành, cập nhật thời gian kết thúc của GanttBar
+                        ganntBar.EndTime = currentTime + 1;
+                        // Loại bỏ tiến trình đã hoàn thành khỏi hàng đợi sẵn sàng
+                        readyQueue.Remove(lowestPriorityProcess);
+                    }
+
+                    // Cập nhật thời gian hiện tại
+                    currentTime++;
+                }
+            }
+            ganttBars = MergeSimilarGanttBars(ganttBars);
+            return ganttBars;
+        }
+
 
 
         private List<GanttBar> MergeSimilarGanttBars(List<GanttBar> ganttBars)
