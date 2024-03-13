@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FCFS", "FCFS\FCFS.csproj", "{7316C06B-545E-43FD-A5F7-B9520BF06ACA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CPU_Scheduling", "FCFS\CPU_Scheduling.csproj", "{7316C06B-545E-43FD-A5F7-B9520BF06ACA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

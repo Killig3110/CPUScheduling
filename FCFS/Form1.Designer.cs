@@ -32,16 +32,19 @@
             this.cPUSchedulingAlgorithmsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fCFSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sJFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chooToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.dataGridView = new System.Windows.Forms.DataGridView();
+            this.process = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.arrivalTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.burstTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btn_Add = new System.Windows.Forms.Button();
             this.btn_Remove = new System.Windows.Forms.Button();
             this.btn_Run = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.rbtn_Preemptive = new System.Windows.Forms.RadioButton();
             this.rbtn_NonPreemptive = new System.Windows.Forms.RadioButton();
-            this.cbx_quantum = new System.Windows.Forms.ComboBox();
             this.btn_Reset = new System.Windows.Forms.Button();
             this.ganttChartPanel = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
@@ -50,9 +53,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.lb_Algorithms = new System.Windows.Forms.Label();
-            this.process = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.arrivalTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.burstTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.lb_Quantum = new System.Windows.Forms.Label();
+            this.tbx_quantum = new System.Windows.Forms.TextBox();
             this.menuAlgorithms.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.panel2.SuspendLayout();
@@ -66,7 +68,7 @@
             this.chooToolStripMenuItem});
             this.menuAlgorithms.Location = new System.Drawing.Point(0, 0);
             this.menuAlgorithms.Name = "menuAlgorithms";
-            this.menuAlgorithms.Size = new System.Drawing.Size(899, 30);
+            this.menuAlgorithms.Size = new System.Drawing.Size(899, 28);
             this.menuAlgorithms.TabIndex = 0;
             this.menuAlgorithms.Text = "menuStrip";
             // 
@@ -74,9 +76,10 @@
             // 
             this.cPUSchedulingAlgorithmsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fCFSToolStripMenuItem,
-            this.sJFToolStripMenuItem});
+            this.sJFToolStripMenuItem,
+            this.rBToolStripMenuItem});
             this.cPUSchedulingAlgorithmsToolStripMenuItem.Name = "cPUSchedulingAlgorithmsToolStripMenuItem";
-            this.cPUSchedulingAlgorithmsToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
+            this.cPUSchedulingAlgorithmsToolStripMenuItem.Size = new System.Drawing.Size(204, 24);
             this.cPUSchedulingAlgorithmsToolStripMenuItem.Text = "CPU Scheduling Algorithms";
             // 
             // fCFSToolStripMenuItem
@@ -93,10 +96,17 @@
             this.sJFToolStripMenuItem.Text = "SJF";
             this.sJFToolStripMenuItem.Click += new System.EventHandler(this.sJFToolStripMenuItem_Click);
             // 
+            // rBToolStripMenuItem
+            // 
+            this.rBToolStripMenuItem.Name = "rBToolStripMenuItem";
+            this.rBToolStripMenuItem.Size = new System.Drawing.Size(123, 26);
+            this.rBToolStripMenuItem.Text = "RB";
+            this.rBToolStripMenuItem.Click += new System.EventHandler(this.rBToolStripMenuItem_Click);
+            // 
             // chooToolStripMenuItem
             // 
             this.chooToolStripMenuItem.Name = "chooToolStripMenuItem";
-            this.chooToolStripMenuItem.Size = new System.Drawing.Size(264, 26);
+            this.chooToolStripMenuItem.Size = new System.Drawing.Size(264, 24);
             this.chooToolStripMenuItem.Text = "<------ Choose an algorithms to run ";
             // 
             // label1
@@ -116,12 +126,35 @@
             this.process,
             this.arrivalTime,
             this.burstTime});
-            this.dataGridView.Location = new System.Drawing.Point(279, 100);
+            this.dataGridView.Location = new System.Drawing.Point(276, 100);
             this.dataGridView.Name = "dataGridView";
             this.dataGridView.RowHeadersWidth = 51;
             this.dataGridView.RowTemplate.Height = 24;
             this.dataGridView.Size = new System.Drawing.Size(410, 230);
             this.dataGridView.TabIndex = 2;
+            // 
+            // process
+            // 
+            this.process.Frozen = true;
+            this.process.HeaderText = "Process";
+            this.process.MinimumWidth = 6;
+            this.process.Name = "process";
+            this.process.ReadOnly = true;
+            this.process.Width = 50;
+            // 
+            // arrivalTime
+            // 
+            this.arrivalTime.HeaderText = "Arrival Time";
+            this.arrivalTime.MinimumWidth = 6;
+            this.arrivalTime.Name = "arrivalTime";
+            this.arrivalTime.Width = 105;
+            // 
+            // burstTime
+            // 
+            this.burstTime.HeaderText = "Burst Time";
+            this.burstTime.MinimumWidth = 6;
+            this.burstTime.Name = "burstTime";
+            this.burstTime.Width = 105;
             // 
             // btn_Add
             // 
@@ -159,8 +192,9 @@
             this.panel2.Controls.Add(this.rbtn_NonPreemptive);
             this.panel2.Location = new System.Drawing.Point(100, 167);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(150, 65);
+            this.panel2.Size = new System.Drawing.Size(170, 65);
             this.panel2.TabIndex = 7;
+            this.panel2.Visible = false;
             // 
             // rbtn_Preemptive
             // 
@@ -186,15 +220,6 @@
             this.rbtn_NonPreemptive.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.rbtn_NonPreemptive.UseVisualStyleBackColor = true;
             // 
-            // cbx_quantum
-            // 
-            this.cbx_quantum.FormattingEnabled = true;
-            this.cbx_quantum.Location = new System.Drawing.Point(99, 238);
-            this.cbx_quantum.Name = "cbx_quantum";
-            this.cbx_quantum.Size = new System.Drawing.Size(146, 24);
-            this.cbx_quantum.TabIndex = 8;
-            this.cbx_quantum.Text = "Quantum";
-            // 
             // btn_Reset
             // 
             this.btn_Reset.BackColor = System.Drawing.Color.Red;
@@ -202,7 +227,7 @@
             this.btn_Reset.ForeColor = System.Drawing.SystemColors.Control;
             this.btn_Reset.Location = new System.Drawing.Point(170, 280);
             this.btn_Reset.Name = "btn_Reset";
-            this.btn_Reset.Size = new System.Drawing.Size(75, 50);
+            this.btn_Reset.Size = new System.Drawing.Size(100, 50);
             this.btn_Reset.TabIndex = 9;
             this.btn_Reset.Text = "Reset";
             this.btn_Reset.UseVisualStyleBackColor = false;
@@ -232,9 +257,9 @@
             this.lb_TmeTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lb_TmeTotal.Location = new System.Drawing.Point(96, 472);
             this.lb_TmeTotal.Name = "lb_TmeTotal";
-            this.lb_TmeTotal.Size = new System.Drawing.Size(141, 18);
+            this.lb_TmeTotal.Size = new System.Drawing.Size(98, 18);
             this.lb_TmeTotal.TabIndex = 12;
-            this.lb_TmeTotal.Text = "Completed Time: ";
+            this.lb_TmeTotal.Text = "Total Time: ";
             // 
             // tbx_Result
             // 
@@ -267,32 +292,31 @@
             this.lb_Algorithms.Text = "Algorithms";
             this.lb_Algorithms.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // process
+            // lb_Quantum
             // 
-            this.process.Frozen = true;
-            this.process.HeaderText = "Process";
-            this.process.MinimumWidth = 6;
-            this.process.Name = "process";
-            this.process.ReadOnly = true;
-            this.process.Width = 75;
+            this.lb_Quantum.AutoSize = true;
+            this.lb_Quantum.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lb_Quantum.Location = new System.Drawing.Point(102, 238);
+            this.lb_Quantum.Name = "lb_Quantum";
+            this.lb_Quantum.Size = new System.Drawing.Size(84, 20);
+            this.lb_Quantum.TabIndex = 15;
+            this.lb_Quantum.Text = "Quantum";
+            this.lb_Quantum.Visible = false;
             // 
-            // arrivalTime
+            // tbx_quantum
             // 
-            this.arrivalTime.HeaderText = "Arrival Time";
-            this.arrivalTime.MinimumWidth = 6;
-            this.arrivalTime.Name = "arrivalTime";
-            // 
-            // burstTime
-            // 
-            this.burstTime.HeaderText = "Burst Time";
-            this.burstTime.MinimumWidth = 6;
-            this.burstTime.Name = "burstTime";
+            this.tbx_quantum.Location = new System.Drawing.Point(204, 238);
+            this.tbx_quantum.Name = "tbx_quantum";
+            this.tbx_quantum.Size = new System.Drawing.Size(66, 22);
+            this.tbx_quantum.TabIndex = 16;
             // 
             // frm_FCFS
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(899, 714);
+            this.Controls.Add(this.tbx_quantum);
+            this.Controls.Add(this.lb_Quantum);
             this.Controls.Add(this.lb_Algorithms);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.tbx_Result);
@@ -300,7 +324,6 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.ganttChartPanel);
             this.Controls.Add(this.btn_Reset);
-            this.Controls.Add(this.cbx_quantum);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.btn_Run);
             this.Controls.Add(this.btn_Remove);
@@ -340,7 +363,6 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.RadioButton rbtn_Preemptive;
         private System.Windows.Forms.RadioButton rbtn_NonPreemptive;
-        private System.Windows.Forms.ComboBox cbx_quantum;
         private System.Windows.Forms.Button btn_Reset;
         private System.Windows.Forms.Panel ganttChartPanel;
         private System.Windows.Forms.Label label2;
@@ -352,6 +374,9 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn process;
         private System.Windows.Forms.DataGridViewTextBoxColumn arrivalTime;
         private System.Windows.Forms.DataGridViewTextBoxColumn burstTime;
+        private System.Windows.Forms.ToolStripMenuItem rBToolStripMenuItem;
+        private System.Windows.Forms.Label lb_Quantum;
+        private System.Windows.Forms.TextBox tbx_quantum;
     }
 }
 
