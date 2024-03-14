@@ -55,69 +55,86 @@ namespace FCFS
 
         private void frm_FCFS_Load(object sender, EventArgs e)
         {
-            dataGridView.Rows.Clear();
-            dataGridView.Refresh();
+            check = false;
+            data.Rows.Clear();
+            data.Refresh();
             ganttChartPanel.Refresh();
             tbx_Result.Clear();
             tbx_quantum.Clear();
-            dataGridView.Columns["Priority"].Visible = false;
-            dataGridView.Columns["Process"].Width = 50;
-            dataGridView.Columns["ArrivalTime"].Width = 110;
-            dataGridView.Columns["BurstTime"].Width = 110;
-            dataGridView.Columns["Process"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridView.Columns["Priority"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridView.Columns["ArrivalTime"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridView.Columns["BurstTime"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            tbx_quantum.Visible = false;
+            rbtn_NonPreemptive.Checked = false;
+            rbtn_Preemptive.Checked = false;
+            data.Columns["processPriority"].Visible = false;
+            data.Columns["processName"].Width = 50;
+            data.Columns["processArrivalTime"].Width = 110;
+            data.Columns["processBurstTime"].Width = 110;
+            data.Columns["processName"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            data.Columns["processPriority"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            data.Columns["processArrivalTime"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            data.Columns["processBurstTime"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
             rbtn_NonPreemptive.Checked = false;
             rbtn_Preemptive.Checked = false;
-            lb_TmeTotal.Text = "Completed Time: ";
+            lb_TmeTotal.Text = "Total Time: ";
         }
 
         private void fCFSToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            frm_FCFS_Load(sender, e);
             lb_Algorithms.Text = "FCFS";
             check = true;
             lb_Quantum.Visible = false;
             tbx_quantum.Visible = false;
             panel2.Visible = false;
-            frm_FCFS_Load(sender, e);
         }
 
         private void sJFToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            frm_FCFS_Load(sender, e);
             lb_Algorithms.Text = "SJF";
             check = true;
             lb_Quantum.Visible = false;
             panel2.Visible = true;
             tbx_quantum.Visible = false;
-            frm_FCFS_Load(sender, e);
 
         }
 
         private void rBToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            frm_FCFS_Load(sender, e);
             lb_Algorithms.Text = "Round Robin";
             check = true;
             panel2.Visible = false;
             lb_Quantum.Visible = true;
             tbx_quantum.Visible = true;
-            frm_FCFS_Load(sender, e);
 
         }
 
         private void priorityToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            frm_FCFS_Load(sender, e);
             lb_Algorithms.Text = "Priority";
             check = true;
             lb_Quantum.Visible = false;
             tbx_quantum.Visible = false;
             panel2.Visible = true;
+            data.Columns["processPriority"].Visible = true;
+            data.Columns["processArrivalTime"].Width = 75;
+            data.Columns["processBurstTime"].Width = 75;
+            data.Columns["processPriority"].Width = 75;
+        }
+
+        private void priorityWithRBToolStripMenuItem_Click(object sender, EventArgs e)
+        {
             frm_FCFS_Load(sender, e);
-            dataGridView.Columns["priority"].Visible = true;
-            dataGridView.Columns["ArrivalTime"].Width = 75;
-            dataGridView.Columns["BurstTime"].Width = 75;
-            dataGridView.Columns["priority"].Width = 75;
+            lb_Algorithms.Text = "Priority with RB";
+            check = true;
+            lb_Quantum.Visible = true;
+            tbx_quantum.Visible = true;
+            data.Columns["processPriority"].Visible = true;
+            data.Columns["processArrivalTime"].Width = 75;
+            data.Columns["processBurstTime"].Width = 75;
+            data.Columns["processPriority"].Width = 75;
         }
 
         private int processCount = 0; // Biến đếm số tiến trình đã được thêm, bắt đầu từ 1
@@ -128,11 +145,18 @@ namespace FCFS
             if (check == true)
             {
                 string name = "P" + processCount;
-                dataGridView.Enabled = true;
-                Process newProcess = new Process(name, 0, 0, 0);
+                data.Enabled = true;
+                //random arrival time từ 0 đến 10
+                Random random = new Random();
+                int arrivalTime = random.Next(0, 10);
+                //random burst time từ 1 đến 20
+                int burstTime = random.Next(1, 20);
+                //random priority từ 1 đến 10
+                int priority = random.Next(1, 10);
+                Process newProcess = new Process(name, arrivalTime, burstTime, priority);
                 AddProcessToDataGridView(newProcess);
                 SortDataGridViewByName();
-                processCount = dataGridView.Rows.Count - 1;
+                processCount = data.Rows.Count;
             }
             else
             {
@@ -143,20 +167,20 @@ namespace FCFS
         private void AddProcessToDataGridView(Process process)
         {
             // Thêm dòng mới vào DataGridView với thông tin của tiến trình vừa tạo
-            dataGridView.Rows.Add(process.Name, process.ArrivalTime, process.BurstTime, process.Priority);
+            data.Rows.Add(process.Name, process.ArrivalTime, process.BurstTime, process.Priority);
         }
 
         private void SortDataGridViewByName()
         {
             // Sắp xếp lại các dòng trong DataGridView theo tên của các tiến trình
-            dataGridView.Sort(dataGridView.Columns[0], ListSortDirection.Ascending);
+            data.Sort(data.Columns[0], ListSortDirection.Ascending);
         }
 
         private void btn_Remove_Click(object sender, EventArgs e)
         {
-            if (dataGridView.SelectedRows.Count > 0)
+            if (data.SelectedRows.Count > 0)
             {
-                int selectedIndex = dataGridView.SelectedRows[0].Index;
+                int selectedIndex = data.SelectedRows[0].Index;
                 RemoveProcessFromDataGridView(selectedIndex);
                 processCount = selectedIndex; // Cập nhật lại biến đếm số tiến trình
             }
@@ -164,7 +188,7 @@ namespace FCFS
 
         private void RemoveProcessFromDataGridView(int rowIndex)
         {
-            dataGridView.Rows.RemoveAt(rowIndex);
+            data.Rows.RemoveAt(rowIndex);
         }
 
         private void btn_Run_Click(object sender, EventArgs e)
@@ -214,6 +238,20 @@ namespace FCFS
                             ganttBars = priority_preemptive(processes);
                         }
                     }
+                    else if (lb_Algorithms.Text == "Priority with RB")
+                    {
+                        int timeQuantum;
+                        if (int.TryParse(tbx_quantum.Text, out timeQuantum))
+                        {
+                            ganttBars = priority_withRB(processes, timeQuantum);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Please enter the correct time quantum", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                    }   
+
                     DrawGanttChart(ganttBars);
                     DrawTimeChart(ganttBars);
                     DisplayProcessTable(ganttBars);
@@ -229,7 +267,7 @@ namespace FCFS
         {
             List<Process> processes = new List<Process>();
 
-            foreach (DataGridViewRow row in dataGridView.Rows)
+            foreach (DataGridViewRow row in data.Rows)
             {
                 if (row.IsNewRow) continue;
 
@@ -241,10 +279,10 @@ namespace FCFS
                 }
                 else
                 {
-                    string name = row.Cells["process"].Value.ToString();
-                    int startTime = int.Parse(row.Cells["arrivalTime"].Value.ToString());
-                    int burstTime = int.Parse(row.Cells["burstTime"].Value.ToString());
-                    int priority = int.Parse(row.Cells["priority"].Value.ToString());
+                    string name = row.Cells["processName"].Value.ToString();
+                    int startTime = int.Parse(row.Cells["processArrivalTime"].Value.ToString());
+                    int burstTime = int.Parse(row.Cells["processBurstTime"].Value.ToString());
+                    int priority = int.Parse(row.Cells["processPriority"].Value.ToString());
 
                     if (startTime < 0 || burstTime < 0 || priority < 0)
                     {
@@ -264,7 +302,9 @@ namespace FCFS
         {
             List<GanttBar> ganttBars = new List<GanttBar>();
 
-            int currentTime = 0;
+            //sắp xếp lại các process theo thời gian đến
+            processes.Sort((a, b) => a.ArrivalTime.CompareTo(b.ArrivalTime));
+            int currentTime = processes[0].ArrivalTime;
 
             foreach (Process process in processes)
             {
@@ -397,7 +437,13 @@ namespace FCFS
                 var arrivedProcesses = processes.Where(p => p.ArrivalTime <= currentTime && p.BurstTime > 0).ToList();
 
                 // Thêm các tiến trình đã đến vào hàng đợi sẵn sàng
-                readyQueue.AddRange(arrivedProcesses);
+                foreach (var process in arrivedProcesses)
+                {
+                    if (!readyQueue.Any(p => p.Name == process.Name))
+                    {
+                        readyQueue.Add(process);
+                    }
+                }
 
                 // Kiểm tra xem hàng đợi sẵn sàng có trống không
                 if (readyQueue.Count == 0)
@@ -559,6 +605,85 @@ namespace FCFS
             return ganttBars;
         }
 
+        private List<GanttBar> priority_withRB(List<Process> processes, int timeQuantum)
+        {
+            List<GanttBar> ganttBars = new List<GanttBar>();
+            List<Process> readyQueue = new List<Process>();
+            int currentTime = 0;
+
+            while (true)
+            {
+                // Lấy các tiến trình đã đến và chưa hoàn thành
+                var arrivedProcesses = processes.Where(p => p.ArrivalTime <= currentTime && p.BurstTime > 0).ToList();
+
+                // Thêm các tiến trình đã đến vào hàng đợi sẵn sàng
+                foreach (var process in arrivedProcesses)
+                {
+                    if (!readyQueue.Any(p => p.Name == process.Name))
+                    {
+                        readyQueue.Add(process);
+                    }
+                }
+
+                // Kiểm tra xem hàng đợi sẵn sàng có trống không
+                if (readyQueue.Count == 0)
+                {
+                    // Nếu hàng đợi sẵn sàng trống và không còn tiến trình nào đến, thoát khỏi vòng lặp
+                    if (arrivedProcesses.Count == 0)
+                        break;
+                    // Nếu hàng đợi sẵn sàng trống nhưng còn tiến trình đến, tăng thời gian lên cho đến khi có tiến trình đến
+                    else
+                        currentTime++;
+                }
+                else
+                {
+                    // Sắp xếp hàng đợi sẵn sàng theo ưu tiên
+                    readyQueue = readyQueue.OrderBy(p => p.Priority).ThenBy(p => p.ArrivalTime).ToList();
+
+
+                    // Lấy tiến trình ở đầu hàng đợi sẵn sàng để thực thi
+                    Process currentProcess = readyQueue.First();
+
+                    // Kiểm tra xem tiến trình còn thời gian thực hiện không
+                    if (currentProcess.BurstTime > 0)
+                    {
+                        // Tạo GanttBar cho tiến trình được chọn
+                        int executionTime = Math.Min(timeQuantum, currentProcess.BurstTime); // Thời gian thực thi là thời gian quantum hoặc thời gian còn lại của tiến trình nếu nhỏ hơn
+                        GanttBar ganttBar = new GanttBar(currentProcess.Name, currentTime, currentProcess.ArrivalTime, executionTime, currentTime + executionTime);
+
+                        // Thêm GanttBar vào danh sách
+                        ganttBars.Add(ganttBar);
+
+                        // Giảm thời gian thực hiện của tiến trình
+                        currentProcess.BurstTime -= executionTime;
+
+                        // Kiểm tra xem tiến trình đã hoàn thành chưa
+                        if (currentProcess.BurstTime == 0)
+                        {
+                            // Nếu tiến trình đã hoàn thành, cập nhật thời gian kết thúc của GanttBar
+                            ganttBar.EndTime = currentTime + executionTime;
+                            // Loại bỏ tiến trình đã hoàn thành khỏi hàng đợi sẵn sàng
+                            readyQueue.Remove(currentProcess);
+                        }
+                        else
+                        {
+                            // Di chuyển tiến trình tới cuối hàng đợi chỉ khi nó còn thời gian thực hiện
+                            readyQueue.RemoveAt(0);
+                            readyQueue.Add(currentProcess);
+                        }
+
+                        // Cập nhật thời gian hiện tại
+                        currentTime += executionTime;
+                    }
+                    else
+                    {
+                        // Nếu tiến trình không còn thời gian thực hiện, loại bỏ nó khỏi hàng đợi
+                        readyQueue.RemoveAt(0);
+                    }
+                }
+            }
+            return ganttBars;
+        }
 
 
         private List<GanttBar> MergeSimilarGanttBars(List<GanttBar> ganttBars)
@@ -692,29 +817,58 @@ namespace FCFS
         {
             // Xóa nội dung cũ trong TextBox
             tbx_Result.Clear();
+            List<GanttBar> endGanttBars = new List<GanttBar>();
 
             // Thêm tiêu đề cho bảng
             tbx_Result.AppendText("Process Table\n");
             tbx_Result.AppendText(Environment.NewLine);
-            tbx_Result.AppendText("Process Name\tWaiting Time\tTurnaround Time\n");
+            tbx_Result.AppendText("Process Name\tWaiting Time\n");
             int totalWaitingTime = 0;
+
             // Tính toán thông tin và hiển thị từng tiến trình
             foreach (GanttBar ganttBar in ganttBars)
             {
-                int turnaroundTime = ganttBar.EndTime - ganttBar.ArrivalTime;
-                int waitingTime = ganttBar.StartTime - ganttBar.ArrivalTime;
+                bool found = false;
+
+                // Duyệt qua từng GanttBar trong danh sách endGanttBars
+                foreach (GanttBar endGanttBar in endGanttBars)
+                {
+                    // Nếu tên tiến trình đã tồn tại trong danh sách
+                    if (endGanttBar.ProcessName == ganttBar.ProcessName)
+                    {
+                        // Cộng dồn Burst và cập nhật thông tin
+                        endGanttBar.BurstTime += ganttBar.BurstTime;
+                        endGanttBar.EndTime = ganttBar.EndTime;
+                        found = true;
+                        break;
+                    }
+                }
+
+                // Nếu không tìm thấy tiến trình trong danh sách, thêm mới
+                if (!found)
+                {
+                    endGanttBars.Add(new GanttBar(ganttBar.ProcessName, ganttBar.StartTime, ganttBar.ArrivalTime, ganttBar.BurstTime, ganttBar.EndTime));
+                }
+            }
+
+            // Tính tổng thời gian chờ và hiển thị thông tin từng tiến trình
+            foreach (GanttBar endGanttBar in endGanttBars)
+            {
+                int waitingTime = endGanttBar.EndTime - endGanttBar.ArrivalTime - endGanttBar.BurstTime;
                 totalWaitingTime += waitingTime;
                 tbx_Result.AppendText(Environment.NewLine);
-                // Thêm thông tin của tiến trình vào TextBox với các cột được căn lề
-                tbx_Result.AppendText($"{ganttBar.ProcessName}\t\t{waitingTime}\t\t{turnaroundTime}\n");
+                tbx_Result.AppendText(endGanttBar.ProcessName + "\t\t" + waitingTime);
+
             }
+            // Hiển thị tổng thời gian chờ trung bình
             tbx_Result.AppendText(Environment.NewLine);
-            tbx_Result.AppendText("Average Waiting Time: " + (float)totalWaitingTime/ganttBars.Count);
+            tbx_Result.AppendText("Average Waiting Time: " + (float)totalWaitingTime/endGanttBars.Count);
         }   
 
         private void btn_Reset_Click(object sender, EventArgs e)
         {
             frm_FCFS_Load(sender, e);
+            lb_Algorithms.Text = "Algorithms";
         }
     }
 }
