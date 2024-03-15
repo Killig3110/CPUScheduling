@@ -79,7 +79,7 @@
             this.chooToolStripMenuItem});
             this.menuAlgorithms.Location = new System.Drawing.Point(0, 0);
             this.menuAlgorithms.Name = "menuAlgorithms";
-            this.menuAlgorithms.Size = new System.Drawing.Size(1610, 30);
+            this.menuAlgorithms.Size = new System.Drawing.Size(1610, 28);
             this.menuAlgorithms.TabIndex = 0;
             this.menuAlgorithms.Text = "menuStrip";
             // 
@@ -98,35 +98,35 @@
             // fCFSToolStripMenuItem
             // 
             this.fCFSToolStripMenuItem.Name = "fCFSToolStripMenuItem";
-            this.fCFSToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.fCFSToolStripMenuItem.Size = new System.Drawing.Size(196, 26);
             this.fCFSToolStripMenuItem.Text = "FCFS";
             this.fCFSToolStripMenuItem.Click += new System.EventHandler(this.fCFSToolStripMenuItem_Click);
             // 
             // sJFToolStripMenuItem
             // 
             this.sJFToolStripMenuItem.Name = "sJFToolStripMenuItem";
-            this.sJFToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.sJFToolStripMenuItem.Size = new System.Drawing.Size(196, 26);
             this.sJFToolStripMenuItem.Text = "SJF";
             this.sJFToolStripMenuItem.Click += new System.EventHandler(this.sJFToolStripMenuItem_Click);
             // 
             // rBToolStripMenuItem
             // 
             this.rBToolStripMenuItem.Name = "rBToolStripMenuItem";
-            this.rBToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.rBToolStripMenuItem.Size = new System.Drawing.Size(196, 26);
             this.rBToolStripMenuItem.Text = "RB";
             this.rBToolStripMenuItem.Click += new System.EventHandler(this.rBToolStripMenuItem_Click);
             // 
             // priorityToolStripMenuItem
             // 
             this.priorityToolStripMenuItem.Name = "priorityToolStripMenuItem";
-            this.priorityToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.priorityToolStripMenuItem.Size = new System.Drawing.Size(196, 26);
             this.priorityToolStripMenuItem.Text = "Priority";
             this.priorityToolStripMenuItem.Click += new System.EventHandler(this.priorityToolStripMenuItem_Click);
             // 
             // priorityWithRBToolStripMenuItem
             // 
             this.priorityWithRBToolStripMenuItem.Name = "priorityWithRBToolStripMenuItem";
-            this.priorityWithRBToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.priorityWithRBToolStripMenuItem.Size = new System.Drawing.Size(196, 26);
             this.priorityWithRBToolStripMenuItem.Text = "Priority With RB";
             this.priorityWithRBToolStripMenuItem.Click += new System.EventHandler(this.priorityWithRBToolStripMenuItem_Click);
             // 
@@ -249,6 +249,7 @@
             this.rbtn_Preemptive.Text = "Preemptive";
             this.rbtn_Preemptive.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.rbtn_Preemptive.UseVisualStyleBackColor = true;
+            this.rbtn_Preemptive.Visible = false;
             // 
             // rbtn_NonPreemptive
             // 
@@ -261,6 +262,7 @@
             this.rbtn_NonPreemptive.Text = "Non Preemptive";
             this.rbtn_NonPreemptive.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.rbtn_NonPreemptive.UseVisualStyleBackColor = true;
+            this.rbtn_NonPreemptive.Visible = false;
             // 
             // btn_Reset
             // 
@@ -280,7 +282,7 @@
             this.ganttChartPanel.BackColor = System.Drawing.Color.White;
             this.ganttChartPanel.Location = new System.Drawing.Point(99, 370);
             this.ganttChartPanel.Name = "ganttChartPanel";
-            this.ganttChartPanel.Size = new System.Drawing.Size(700, 100);
+            this.ganttChartPanel.Size = new System.Drawing.Size(900, 100);
             this.ganttChartPanel.TabIndex = 10;
             // 
             // label2
@@ -311,7 +313,7 @@
             this.tbx_Result.Name = "tbx_Result";
             this.tbx_Result.ReadOnly = true;
             this.tbx_Result.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.tbx_Result.Size = new System.Drawing.Size(700, 150);
+            this.tbx_Result.Size = new System.Drawing.Size(900, 150);
             this.tbx_Result.TabIndex = 13;
             // 
             // label3
@@ -407,16 +409,16 @@
             // tracePanel
             // 
             this.tracePanel.Enabled = false;
-            this.tracePanel.Location = new System.Drawing.Point(832, 372);
+            this.tracePanel.Location = new System.Drawing.Point(1038, 372);
             this.tracePanel.Name = "tracePanel";
-            this.tracePanel.Size = new System.Drawing.Size(679, 291);
+            this.tracePanel.Size = new System.Drawing.Size(495, 291);
             this.tracePanel.TabIndex = 18;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(828, 347);
+            this.label5.Location = new System.Drawing.Point(1034, 347);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(109, 20);
             this.label5.TabIndex = 20;

@@ -55,6 +55,7 @@ namespace FCFS
         private void frm_FCFS_Load(object sender, EventArgs e)
         {
             check = false;
+            lb_Algorithms.Text = "Algorithms";
             data.Rows.Clear();
             data.Refresh();
             ganttChartPanel.Refresh();
@@ -71,8 +72,7 @@ namespace FCFS
             data.Columns["processPriority"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             data.Columns["processArrivalTime"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             data.Columns["processBurstTime"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            rbtn_NonPreemptive.Checked = false;
-            rbtn_Preemptive.Checked = false;
+            panel2.Visible = false;
             lb_TmeTotal.Text = "Total Time: ";
         }
 
@@ -93,6 +93,8 @@ namespace FCFS
             check = true;
             lb_Quantum.Visible = false;
             panel2.Visible = true;
+            rbtn_Preemptive.Visible = true;
+            rbtn_NonPreemptive.Visible = true;
             tbx_quantum.Visible = false;
 
         }
@@ -147,8 +149,8 @@ namespace FCFS
                 //random arrival time từ 0 đến 10
                 Random random = new Random();
                 int arrivalTime = random.Next(0, 10);
-                //random burst time từ 1 đến 10
-                int burstTime = random.Next(1, 10);
+                //random burst time từ 2 đến 10
+                int burstTime = random.Next(2, 10);
                 //random priority từ 1 đến 10
                 int priority = random.Next(1, 10);
                 Process newProcess = new Process(name, arrivalTime, burstTime, priority);
@@ -213,6 +215,11 @@ namespace FCFS
                         {
                             ganttBars = SJF_preemptive(processes);
                         }
+                        else
+                        {
+                               MessageBox.Show("Please choose the algorithms", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }    
                     }
                     else if (lb_Algorithms.Text == "Round Robin")
                     {
@@ -360,9 +367,24 @@ namespace FCFS
                 }
                 else
                 {
-                    // Nếu không có tiến trình nào sẵn sàng thì tăng thời gian lên đến khi có tiến trình mới đến
-                    int nextArrivalTime = processes.Where(p => p.ArrivalTime > currentTime).Min(p => p.ArrivalTime);
-                    currentTime = nextArrivalTime;
+                    int nextArrivalTime = int.MaxValue; // Khởi tạo nextArrivalTime là giá trị lớn nhất của kiểu int
+
+                    // Kiểm tra xem có tiến trình nào đến sau currentTime không
+                    foreach (Process process in processes)
+                    {
+                        if (process.ArrivalTime > currentTime && process.ArrivalTime < nextArrivalTime)
+                        {
+                            nextArrivalTime = process.ArrivalTime;
+                        }
+                    }
+
+                    // Kiểm tra nếu nextArrivalTime vẫn giữ giá trị ban đầu, tức là không có tiến trình nào đến sau currentTime
+                    if (nextArrivalTime == int.MaxValue)
+                    {
+                        // Thực hiện xử lý khi không có tiến trình nào đến sau currentTime
+                        break;
+                    }
+
                 }
             }
 
@@ -545,9 +567,23 @@ namespace FCFS
                 }
                 else
                 {
-                    // Nếu không có tiến trình nào sẵn sàng thì tăng thời gian lên đến khi có tiến trình mới đến
-                    int nextArrivalTime = processes.Where(p => p.ArrivalTime > currentTime).Min(p => p.ArrivalTime);
-                    currentTime = nextArrivalTime;
+                    int nextArrivalTime = int.MaxValue; // Khởi tạo nextArrivalTime là giá trị lớn nhất của kiểu int
+
+                    // Kiểm tra xem có tiến trình nào đến sau currentTime không
+                    foreach (Process process in processes)
+                    {
+                        if (process.ArrivalTime > currentTime && process.ArrivalTime < nextArrivalTime)
+                        {
+                            nextArrivalTime = process.ArrivalTime;
+                        }
+                    }
+
+                    // Kiểm tra nếu nextArrivalTime vẫn giữ giá trị ban đầu, tức là không có tiến trình nào đến sau currentTime
+                    if (nextArrivalTime == int.MaxValue)
+                    {
+                        // Thực hiện xử lý khi không có tiến trình nào đến sau currentTime
+                        break;
+                    }
                 }
             }
 
@@ -759,7 +795,7 @@ namespace FCFS
             lb_TmeTotal.Text = "Completed Time: " + totalTime.ToString();
 
             // Tính tỷ lệ giữa tổng thời gian và 750 pixel
-            float scaleFactor = 500 / totalTime;
+            float scaleFactor = 600 / totalTime;
 
             // Tạo đối tượng Graphics từ Panel
             Graphics g = ganttChartPanel.CreateGraphics();
@@ -783,7 +819,7 @@ namespace FCFS
                 g.FillRectangle(barBrush, rect);
                 g.DrawRectangle(barPen, rect);
                 // Hiển thị tên tiến trình
-                Font font = new Font("Arial", 6, FontStyle.Regular);
+                Font font = new Font("Arial", 10, FontStyle.Regular);
                 string text = ganttBar.ProcessName;
                 g.DrawString(text, font, Brushes.Black, startX + width / 2 - 15, y + 8);
             }
@@ -803,7 +839,7 @@ namespace FCFS
             }
 
             // Tính tỷ lệ giữa tổng thời gian và 750 pixel
-            float scaleFactor = 500 / totalTime;
+            float scaleFactor = 600 / totalTime;
 
             // Tạo đối tượng Graphics từ Panel
             Graphics g = ganttChartPanel.CreateGraphics();
@@ -833,10 +869,10 @@ namespace FCFS
                 string textEnd = ganttBar.EndTime.ToString();
 
                 // Tính toán vị trí bắt đầu của văn bản để căn lề trái
-                float textY = startX + 5;
-                Font font = new Font("Arial", 6, FontStyle.Regular);
+                //float textY = startX + 5;
+                Font font = new Font("Arial", 8, FontStyle.Regular);
                 // Vẽ văn bản với căn lề trái
-                g.DrawString(textStart, font, Brushes.Black, textY, y + 8);
+                //g.DrawString(textStart, font, Brushes.Black, textY, y + 8);
 
                 // Tính toán vị trí bắt đầu của văn bản để căn lề phải
                 float textWidth = g.MeasureString(textEnd, Font).Width;
@@ -898,12 +934,11 @@ namespace FCFS
             // Hiển thị tổng thời gian chờ trung bình
             tbx_Result.AppendText(Environment.NewLine);
             tbx_Result.AppendText("Average Waiting Time: " + (float)totalWaitingTime/endGanttBars.Count);
-        }   
+        }
 
         private void btn_Reset_Click(object sender, EventArgs e)
         {
             frm_FCFS_Load(sender, e);
-            lb_Algorithms.Text = "Algorithms";
         }
     }
 }
