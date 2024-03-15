@@ -52,7 +52,6 @@ namespace FCFS
                 EndTime = endTime;
             }
         }
-
         private void frm_FCFS_Load(object sender, EventArgs e)
         {
             check = false;
@@ -72,7 +71,6 @@ namespace FCFS
             data.Columns["processPriority"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             data.Columns["processArrivalTime"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             data.Columns["processBurstTime"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-
             rbtn_NonPreemptive.Checked = false;
             rbtn_Preemptive.Checked = false;
             lb_TmeTotal.Text = "Total Time: ";
@@ -149,8 +147,8 @@ namespace FCFS
                 //random arrival time từ 0 đến 10
                 Random random = new Random();
                 int arrivalTime = random.Next(0, 10);
-                //random burst time từ 1 đến 20
-                int burstTime = random.Next(1, 20);
+                //random burst time từ 1 đến 10
+                int burstTime = random.Next(1, 10);
                 //random priority từ 1 đến 10
                 int priority = random.Next(1, 10);
                 Process newProcess = new Process(name, arrivalTime, burstTime, priority);
@@ -193,12 +191,14 @@ namespace FCFS
 
         private void btn_Run_Click(object sender, EventArgs e)
         {
+            List<GanttBar> ganttBars = new List<GanttBar>();
+            List<Process> processes = ExtractProcessesFromDataGridView();
             if (check == true)
             {
-                List<Process> processes = ExtractProcessesFromDataGridView();
+                
                 if (processes != null)
                 {
-                    List<GanttBar> ganttBars = new List<GanttBar>();
+                    
                     if (lb_Algorithms.Text == "FCFS")
                     {
                         ganttBars = FCFS(processes);
@@ -250,7 +250,7 @@ namespace FCFS
                             MessageBox.Show("Please enter the correct time quantum", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
                         }
-                    }   
+                    }
 
                     DrawGanttChart(ganttBars);
                     DrawTimeChart(ganttBars);
@@ -325,7 +325,9 @@ namespace FCFS
         {
             List<GanttBar> ganttBars = new List<GanttBar>();
 
-            int currentTime = 0;
+            //tìm thời gian đến nhỏ nhất
+            int currentTime = processes.Min(p => p.ArrivalTime);
+
             int totalProcesses = processes.Count;
 
             while (ganttBars.Count < totalProcesses)
@@ -371,7 +373,8 @@ namespace FCFS
         {
             List<GanttBar> ganttBars = new List<GanttBar>();
             List<Process> readyQueue = new List<Process>();
-            int currentTime = 0;
+            //tìm thời gian đến nhỏ nhất
+            int currentTime = processes.Min(p => p.ArrivalTime);
 
             while (true)
             {
@@ -421,7 +424,7 @@ namespace FCFS
                     currentTime++;
                 }
             }
-           ganttBars = MergeSimilarGanttBars(ganttBars);
+            ganttBars = MergeSimilarGanttBars(ganttBars);
             return ganttBars;
         }
 
@@ -429,7 +432,9 @@ namespace FCFS
         {
             List<GanttBar> ganttBars = new List<GanttBar>();
             List<Process> readyQueue = new List<Process>();
-            int currentTime = 0;
+            
+            //tìm thời gian đến nhỏ nhất
+            int currentTime = processes.Min(p => p.ArrivalTime);
 
             while (true)
             {
@@ -505,7 +510,9 @@ namespace FCFS
         {
             List<GanttBar> ganttBars = new List<GanttBar>();
 
-            int currentTime = 0;
+            //tìm thời gian đến nhỏ nhất
+            int currentTime = processes.Min(p => p.ArrivalTime);
+
             int totalProcesses = processes.Count;
 
             while (ganttBars.Count < totalProcesses)
@@ -551,7 +558,9 @@ namespace FCFS
         {
             List<GanttBar> ganttBars = new List<GanttBar>();
             List<Process> readyQueue = new List<Process>();
-            int currentTime = 0;
+
+            //tìm thời gian đến nhỏ nhất
+            int currentTime = processes.Min(p => p.ArrivalTime);
 
             while (true)
             {
@@ -609,7 +618,9 @@ namespace FCFS
         {
             List<GanttBar> ganttBars = new List<GanttBar>();
             List<Process> readyQueue = new List<Process>();
-            int currentTime = 0;
+
+            //tìm thời gian đến nhỏ nhất
+            int currentTime = processes.Min(p => p.ArrivalTime);
 
             while (true)
             {
@@ -736,7 +747,15 @@ namespace FCFS
             ganttChartPanel.Refresh();
 
             // Tính tổng thời gian của toàn bộ chương trình
-            int totalTime = ganttBars.Max(item => item.EndTime);
+            int totalTime = 1;
+            foreach(GanttBar ganttBar in ganttBars)
+            {
+                if (ganttBar.EndTime > totalTime)
+                {
+                    totalTime = ganttBar.EndTime;
+                }
+            }
+
             lb_TmeTotal.Text = "Completed Time: " + totalTime.ToString();
 
             // Tính tỷ lệ giữa tổng thời gian và 750 pixel
@@ -764,8 +783,9 @@ namespace FCFS
                 g.FillRectangle(barBrush, rect);
                 g.DrawRectangle(barPen, rect);
                 // Hiển thị tên tiến trình
+                Font font = new Font("Arial", 6, FontStyle.Regular);
                 string text = ganttBar.ProcessName;
-                g.DrawString(text, Font, Brushes.Black, startX + width / 2 - 15, y + 8);
+                g.DrawString(text, font, Brushes.Black, startX + width / 2 - 15, y + 8);
             }
 
         }
@@ -773,7 +793,14 @@ namespace FCFS
         private void DrawTimeChart(List<GanttBar> ganttBars)
         {
             // Tính tổng thời gian của toàn bộ chương trình
-            int totalTime = ganttBars.Max(item => item.EndTime);
+            int totalTime = 1;
+            foreach (GanttBar ganttBar in ganttBars)
+            {
+                if (ganttBar.EndTime > totalTime)
+                {
+                    totalTime = ganttBar.EndTime;
+                }
+            }
 
             // Tính tỷ lệ giữa tổng thời gian và 750 pixel
             float scaleFactor = 500 / totalTime;
@@ -793,6 +820,7 @@ namespace FCFS
                 int startX = (int)(ganttBar.StartTime * scaleFactor);
                 int width = (int)((ganttBar.EndTime - ganttBar.StartTime) * scaleFactor);
 
+
                 int y = 50; // Vị trí dọc của thanh GanttBar
 
                 // Vẽ thanh GanttBar
@@ -801,13 +829,20 @@ namespace FCFS
                 g.DrawRectangle(barPen, rect);
 
                 // Hiển thị tên tiến trình
-                string text = ganttBar.EndTime.ToString();
+                string textStart = ganttBar.StartTime.ToString();
+                string textEnd = ganttBar.EndTime.ToString();
+
+                // Tính toán vị trí bắt đầu của văn bản để căn lề trái
+                float textY = startX + 5;
+                Font font = new Font("Arial", 6, FontStyle.Regular);
+                // Vẽ văn bản với căn lề trái
+                g.DrawString(textStart, font, Brushes.Black, textY, y + 8);
+
                 // Tính toán vị trí bắt đầu của văn bản để căn lề phải
-                float textWidth = g.MeasureString(text, Font).Width;
+                float textWidth = g.MeasureString(textEnd, Font).Width;
                 float textX = startX + width - textWidth - 5;
-                Font font = new Font("Arial", 10, FontStyle.Bold);
                 // Vẽ văn bản với căn lề phải
-                g.DrawString(text, font, Brushes.Black, textX, y + 8);
+                g.DrawString(textEnd, font, Brushes.Black, textX, y + 8);
 
             }
 
