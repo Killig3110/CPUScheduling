@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static FCFS.frm_FCFS;
@@ -52,18 +53,25 @@ namespace FCFS
                 EndTime = endTime;
             }
         }
+
+        private int processCount = 0; // Biến đếm số tiến trình đã được thêm, bắt đầu từ 1
+
         private void frm_FCFS_Load(object sender, EventArgs e)
         {
             check = false;
+
             lb_Algorithms.Text = "Algorithms";
+
             data.Rows.Clear();
             data.Refresh();
             ganttChartPanel.Refresh();
             tbx_Result.Clear();
             tbx_quantum.Clear();
+
             tbx_quantum.Visible = false;
             rbtn_NonPreemptive.Checked = false;
             rbtn_Preemptive.Checked = false;
+
             data.Columns["processPriority"].Visible = false;
             data.Columns["processName"].Width = 50;
             data.Columns["processArrivalTime"].Width = 110;
@@ -72,8 +80,32 @@ namespace FCFS
             data.Columns["processPriority"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             data.Columns["processArrivalTime"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             data.Columns["processBurstTime"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            
             panel2.Visible = false;
+            
             lb_TmeTotal.Text = "Total Time: ";
+            lb_AverageWaitingTime.Text = "Average Waiting Time: ";
+            
+            lb_Multi.Visible = false;
+            lb_Num.Visible = false;
+
+            lb_Queue1.Visible = false;
+            lb_Queue2.Visible = false;
+            lb_Queue3.Visible = false;
+
+            lb_RB1.Visible = false;
+            lb_RB2.Visible = false;
+            lb_FCFS.Visible = false;
+
+            cbx_Number.Visible = false;
+            cbx_Number.Items.Clear();
+
+            txt_Quantum1.Visible = false;
+            txt_Quantum1.Clear();
+            txt_Quantum2.Visible = false;
+            txt_Quantum2.Clear();
+
+            processCount = 0;
         }
 
         private void fCFSToolStripMenuItem_Click(object sender, EventArgs e)
@@ -137,26 +169,58 @@ namespace FCFS
             data.Columns["processPriority"].Width = 75;
         }
 
-        private int processCount = 0; // Biến đếm số tiến trình đã được thêm, bắt đầu từ 1
+        private void multiveFeadbackQueueToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frm_FCFS_Load(sender, e);
+            check = true;
 
+            lb_Algorithms.Text = "Multilevel Feedback Queue";
+
+            lb_Multi.Visible = true;
+            lb_Num.Visible = true;
+
+            lb_Queue1.Visible = true;
+            lb_Queue2.Visible = true;
+            lb_Queue3.Visible = true;
+
+            cbx_Number.Visible = true;
+
+            lb_RB1.Visible = true;
+            lb_RB2.Visible = true;
+            lb_FCFS.Visible = true;
+
+            txt_Quantum1.Visible = true;
+            txt_Quantum2.Visible = true;
+
+            cbx_Number.Items.Add("1");
+            cbx_Number.Items.Add("2");
+            cbx_Number.Items.Add("3");
+        }
 
         private void btn_Add_Click(object sender, EventArgs e)
         {
             if (check == true)
             {
-                string name = "P" + processCount;
-                data.Enabled = true;
-                //random arrival time từ 0 đến 10
-                Random random = new Random();
-                int arrivalTime = random.Next(0, 10);
-                //random burst time từ 2 đến 10
-                int burstTime = random.Next(2, 10);
-                //random priority từ 1 đến 10
-                int priority = random.Next(1, 10);
-                Process newProcess = new Process(name, arrivalTime, burstTime, priority);
-                AddProcessToDataGridView(newProcess);
-                SortDataGridViewByName();
-                processCount = data.Rows.Count;
+                if (processCount < 10)
+                {
+                    string name = "P" + processCount;
+                    data.Enabled = true;
+                    //random arrival time từ 0 đến 10
+                    Random random = new Random();
+                    int arrivalTime = random.Next(0, 10);
+                    //random burst time từ 2 đến 10
+                    int burstTime = random.Next(2, 10);
+                    //random priority từ 1 đến 10
+                    int priority = random.Next(1, 10);
+                    Process newProcess = new Process(name, arrivalTime, burstTime, priority);
+                    AddProcessToDataGridView(newProcess);
+                    SortDataGridViewByName();
+                    processCount = data.Rows.Count;
+                }
+                else
+                {
+                    MessageBox.Show("The maximum number of processes is 10", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             else
             {
@@ -197,10 +261,9 @@ namespace FCFS
             List<Process> processes = ExtractProcessesFromDataGridView();
             if (check == true)
             {
-                
-                if (processes != null)
+                if (processes.Count != 0)
                 {
-                    
+
                     if (lb_Algorithms.Text == "FCFS")
                     {
                         ganttBars = FCFS(processes);
@@ -217,9 +280,9 @@ namespace FCFS
                         }
                         else
                         {
-                               MessageBox.Show("Please choose the algorithms", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show("Please choose the algorithms", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
-                        }    
+                        }
                     }
                     else if (lb_Algorithms.Text == "Round Robin")
                     {
@@ -244,6 +307,11 @@ namespace FCFS
                         {
                             ganttBars = priority_preemptive(processes);
                         }
+                        else
+                        {
+                            MessageBox.Show("Please choose the algorithms", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
                     }
                     else if (lb_Algorithms.Text == "Priority with RB")
                     {
@@ -258,10 +326,38 @@ namespace FCFS
                             return;
                         }
                     }
+                    else if (lb_Algorithms.Text == "Multilevel Feedback Queue")
+                    {
+                        if (Int32.Parse(cbx_Number.Text.ToString()) < 1 && Int32.Parse(cbx_Number.Text.ToString()) > 3)
+                        {
+                            MessageBox.Show("Please enter the correct number", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                        else if (txt_Quantum1.Text == "" || txt_Quantum2.Text == "")
+                        {
+                            MessageBox.Show("Please enter the correct time quantum", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                        else
+                        {
+                            int[] quantum = {Int32.Parse(txt_Quantum1.Text.ToString()), Int32.Parse(txt_Quantum2.Text.ToString()), int.MaxValue};
+                            ganttBars = multive_feedback_queue(processes, quantum);
+                        }
+                    }    
+                    else
+                    {
+                        MessageBox.Show("Please choose the algorithms", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
 
                     DrawGanttChart(ganttBars);
                     DrawTimeChart(ganttBars);
                     DisplayProcessTable(ganttBars);
+                }
+                else
+                {
+                    MessageBox.Show("Please enter the correct data", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
                 }
             }
             else
@@ -316,7 +412,7 @@ namespace FCFS
             foreach (Process process in processes)
             {
                 // Tạo GanttBar cho tiến trình hiện tại
-                GanttBar ganntBar = new GanttBar(process.Name, currentTime, process.ArrivalTime,process.BurstTime, currentTime + process.BurstTime);
+                GanttBar ganntBar = new GanttBar(process.Name, currentTime, process.ArrivalTime, process.BurstTime, currentTime + process.BurstTime);
 
                 // Thêm GanttBar vào danh sách
                 ganttBars.Add(ganntBar);
@@ -732,6 +828,188 @@ namespace FCFS
             return ganttBars;
         }
 
+        private List<GanttBar> multive_feedback_queue(List<Process> processes, int[] quantum)
+        {
+            List<GanttBar> ganttBars = new List<GanttBar>();
+            Queue<Process>[] readyQueues = new Queue<Process>[3];
+            for (int i = 0; i < 3; i++)
+            {
+                readyQueues[i] = new Queue<Process>(); // Khởi tạo hàng đợi sẵn sàng cho mỗi mức độ ưu tiên
+            }
+
+            int currentTime = processes.Min(p => p.ArrivalTime); // Tìm thời gian đến nhỏ nhất
+
+            while (true)
+            {
+                //Kiểm tra xem tất cả các hàng đợi có trống không và không còn tiến trình nào đang chờ xử lý
+                bool allQueuesEmpty = true;
+                for (int i = 0; i < 3; i++)
+                {
+                    if (readyQueues[i].Count > 0)
+                    {
+                        allQueuesEmpty = false;
+                        break;
+                    }
+                }
+
+                if (allQueuesEmpty && processes.Count == 0)
+                {
+                    break; // Thoát khỏi vòng lặp nếu tất cả các hàng đợi đều trống và không còn tiến trình nào còn lại
+                }
+
+                // Di chuyển các tiến trình đến vào hàng đợi phù hợp
+                List<Process> processesToRemove = new List<Process>(); // Danh sách tạm thời để lưu trữ các tiến trình cần loại bỏ
+                foreach (Process process in processes)
+                {
+                    if (process.ArrivalTime <= currentTime)
+                    {
+                        // Kiểm tra xem có tiến trình nào đang thực thi ở các hàng đợi ưu tiên thấp hơn hay không
+                        bool processRunning = false;
+                        for (int i = 1; i < 3; i++)
+                        {
+                            if (readyQueues[i].Count > 0)
+                            {
+                                processRunning = true;
+                                break;
+                            }
+                        }
+
+                        if (!processRunning)
+                        {
+                            readyQueues[0].Enqueue(process); // Tiến trình đến sớm nhất vào hàng đợi ưu tiên cao nhất
+                            processesToRemove.Add(process); // Thêm tiến trình vào danh sách tạm thời
+                        }
+                    }
+                }
+
+                // Loại bỏ các tiến trình đã được di chuyển vào hàng đợi khỏi danh sách processes
+                foreach (Process process in processesToRemove)
+                {
+                    processes.Remove(process);
+                }
+
+                // Tiến trình ở hàng đợi ưu tiên cao nhất được thực thi trước
+                if (readyQueues[0].Count > 0)
+                {
+                    Process currentProcess = readyQueues[0].Dequeue();
+
+                    // Tạo GanttBar cho tiến trình được chọn
+                    int executionTime = Math.Min(quantum[0], currentProcess.BurstTime); // Thời gian thực thi là thời gian quantum hoặc thời gian còn lại của tiến trình nếu nhỏ hơn
+                    GanttBar ganttBar = new GanttBar(currentProcess.Name, currentTime, currentProcess.ArrivalTime, executionTime, currentTime + executionTime);
+
+                    // Thêm GanttBar vào danh sách
+                    ganttBars.Add(ganttBar);
+
+                    // Giảm thời gian thực hiện của tiến trình
+                    currentProcess.BurstTime -= executionTime;
+
+                    // Kiểm tra xem tiến trình đã hoàn thành chưa
+                    if (currentProcess.BurstTime == 0)
+                    {
+                        // Nếu tiến trình đã hoàn thành, cập nhật thời gian kết thúc của GanttBar
+                        ganttBar.EndTime = currentTime + executionTime;
+                    }
+                    else
+                    {
+                        // Di chuyển tiến trình tới cuối hàng đợi ưu tiên thấp hơn
+                        readyQueues[1].Enqueue(currentProcess);
+                    }
+
+                    // Cập nhật thời gian hiện tại
+                    currentTime += executionTime;
+                }
+                // Tiến trình ở các hàng đợi ưu tiên thấp hơn được thực thi nếu không có tiến trình nào ở hàng đợi cao hơn
+                else if (readyQueues[1].Count > 0)
+                {
+                    Process currentProcess = readyQueues[1].Dequeue();
+
+                    // Tạo GanttBar cho tiến trình được chọn
+                    int executionTime = Math.Min(quantum[1], currentProcess.BurstTime); // Thời gian thực thi là thời gian quantum hoặc thời gian còn lại của tiến trình nếu nhỏ hơn
+
+                    // Giảm thời gian thực hiện của tiến trình
+                    currentProcess.BurstTime -= executionTime;
+
+                    // Cập nhật thời gian hiện tại
+                    currentTime += executionTime;
+
+                    // Kiểm tra xem có tiến trình mới đến trong khoảng thời gian thực thi của tiến trình hiện tại
+                    bool processArrived = false;
+                    foreach (Process process in processes)
+                    {
+                        if (process.ArrivalTime <= currentTime)
+                        {
+                            // Cắt thời gian thực hiện của tiến trình hiện tại để chờ tiến trình mới đến
+                            currentProcess.BurstTime -= (process.ArrivalTime - currentTime);
+                            // Tạo GanttBar cho khoảng thời gian chờ
+                            ganttBars.Add(new GanttBar(currentProcess.Name, currentTime - executionTime, currentProcess.ArrivalTime, currentProcess.BurstTime, process.ArrivalTime));
+                            // Cập nhật thời gian hiện tại
+                            currentTime = process.ArrivalTime;
+                            // Di chuyển tiến trình hiện tại vào hàng đợi ưu tiên cao hơn
+                            readyQueues[1].Enqueue(currentProcess);
+                            // Thêm tiến trình mới đến vào hàng đợi ưu tiên cao nhất
+                            readyQueues[0].Enqueue(process);
+                            // Xóa tiến trình mới đến khỏi danh sách chờ xử lý
+                            processes.Remove(process);
+                            // Đánh dấu là đã có tiến trình mới đến trong khoảng thời gian thực hiện của tiến trình hiện tại
+                            processArrived = true;
+                            break;
+                        }
+                    }
+
+                    // Nếu có tiến trình mới đến trong khoảng thời gian thực hiện của tiến trình hiện tại, tiếp tục vòng lặp
+                    if (processArrived)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        // Nếu không có tiến trình mới đến, tạo GanttBar cho thời gian thực hiện của tiến trình hiện tại
+                        GanttBar ganttBar = new GanttBar(currentProcess.Name, currentTime, currentProcess.ArrivalTime, executionTime, currentTime + executionTime);
+                        // Thêm GanttBar vào danh sách
+                        ganttBars.Add(ganttBar);
+
+                        // Kiểm tra xem tiến trình đã hoàn thành chưa
+                        if (currentProcess.BurstTime == 0)
+                        {
+                            // Nếu tiến trình đã hoàn thành, cập nhật thời gian kết thúc của GanttBar
+                            ganttBar.EndTime = currentTime + executionTime;
+                        }
+                        else
+                        {
+                            // Di chuyển tiến trình tới cuối hàng đợi ưu tiên thấp hơn
+                            readyQueues[2].Enqueue(currentProcess);
+                        }
+                    }
+                }
+                // Tiến trình ở hàng đợi có mức độ ưu tiên thấp nhất được thực thi cuối cùng
+                else if (readyQueues[2].Count > 0)
+                {
+                    Process currentProcess = readyQueues[2].Dequeue();
+
+                    // Tạo GanttBar cho tiến trình được chọn
+                    int executionTime = currentProcess.BurstTime; // Thời gian thực thi là thời gian còn lại của tiến trình
+                    GanttBar ganttBar = new GanttBar(currentProcess.Name, currentTime, currentProcess.ArrivalTime, executionTime, currentTime + executionTime);
+
+                    // Thêm GanttBar vào danh sách
+                    ganttBars.Add(ganttBar);
+
+                    // Giảm thời gian thực hiện của tiến trình
+                    currentProcess.BurstTime -= executionTime;
+
+                    // Cập nhật thời gian kết thúc của GanttBar
+                    ganttBar.EndTime = currentTime + executionTime;
+
+                    // Cập nhật thời gian hiện tại
+                    currentTime += executionTime;
+                }
+                else
+                {
+                    currentTime++;
+                }
+            }
+
+            return ganttBars;
+        }
 
         private List<GanttBar> MergeSimilarGanttBars(List<GanttBar> ganttBars)
         {
@@ -795,7 +1073,7 @@ namespace FCFS
             lb_TmeTotal.Text = "Completed Time: " + totalTime.ToString();
 
             // Tính tỷ lệ giữa tổng thời gian và 750 pixel
-            float scaleFactor = 600 / totalTime;
+            float scaleFactor = 750 / totalTime;
 
             // Tạo đối tượng Graphics từ Panel
             Graphics g = ganttChartPanel.CreateGraphics();
@@ -839,7 +1117,7 @@ namespace FCFS
             }
 
             // Tính tỷ lệ giữa tổng thời gian và 750 pixel
-            float scaleFactor = 600 / totalTime;
+            float scaleFactor = 750 / totalTime;
 
             // Tạo đối tượng Graphics từ Panel
             Graphics g = ganttChartPanel.CreateGraphics();
@@ -869,10 +1147,10 @@ namespace FCFS
                 string textEnd = ganttBar.EndTime.ToString();
 
                 // Tính toán vị trí bắt đầu của văn bản để căn lề trái
-                //float textY = startX + 5;
+                float textY = startX + 5;
                 Font font = new Font("Arial", 8, FontStyle.Regular);
                 // Vẽ văn bản với căn lề trái
-                //g.DrawString(textStart, font, Brushes.Black, textY, y + 8);
+                g.DrawString(textStart, font, Brushes.Black, textY, y + 8);
 
                 // Tính toán vị trí bắt đầu của văn bản để căn lề phải
                 float textWidth = g.MeasureString(textEnd, Font).Width;
@@ -932,13 +1210,14 @@ namespace FCFS
 
             }
             // Hiển thị tổng thời gian chờ trung bình
-            tbx_Result.AppendText(Environment.NewLine);
-            tbx_Result.AppendText("Average Waiting Time: " + (float)totalWaitingTime/endGanttBars.Count);
+            float averageWaitingTime = (float)totalWaitingTime / endGanttBars.Count;
+            lb_AverageWaitingTime.Text = "Average Waiting Time: " + (averageWaitingTime).ToString();
         }
 
         private void btn_Reset_Click(object sender, EventArgs e)
         {
             frm_FCFS_Load(sender, e);
         }
+
     }
 }
